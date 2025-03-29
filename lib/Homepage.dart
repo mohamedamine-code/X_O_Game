@@ -106,7 +106,7 @@ class _HomepageState extends State<Homepage> {
                     rest();
                   },
                   child: const Text(
-                    'R E P L A Y',
+                    'R E P L A Y !',
                     style: TextStyle(fontSize: 18),
                   ))
             ],
@@ -136,7 +136,7 @@ class _HomepageState extends State<Homepage> {
                     rest();
                   },
                   child: Text(
-                    'R E P L A Y',
+                    'R E P L A Y !',
                     style: TextStyle(fontSize: 18),
                   )),
             ],
