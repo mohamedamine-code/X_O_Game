@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:games_x_o/util/box.dart';
 
@@ -23,16 +25,18 @@ class _HomepageState extends State<Homepage> {
     '',
     '',
   ];
+  int nbre_xo = 0;
 
   void tapped(int index) {
     setState(() {
-      if (X_dispaly) {
+      if (X_dispaly && xoDisplay_list[index] == '') {
         xoDisplay_list[index] = xoDisplay;
         xoDisplay = 'O';
-      }
-      if (X_dispaly != true) {
+        nbre_xo++;
+      } else if (X_dispaly != true && xoDisplay_list[index] == '') {
         xoDisplay_list[index] = xoDisplay;
         xoDisplay = 'X';
+        nbre_xo++;
       }
       X_dispaly = !X_dispaly;
     });
@@ -81,10 +85,41 @@ class _HomepageState extends State<Homepage> {
         xoDisplay_list[2] != '') {
       dialoge(xoDisplay_list[2]);
     }
+    if (nbre_xo == 9) {
+      DrawDialoge();
+    }
+  }
+
+  void DrawDialoge() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.greenAccent[700],
+            title: const Text('D R A W !'),
+            content: Text('No Plyaer is Win !'),
+            actions: [
+              GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    rest();
+                  },
+                  child: const Text(
+                    'R E P L A Y',
+                    style: TextStyle(fontSize: 18),
+                  ))
+            ],
+          );
+        });
+    setState(() {
+      nbre_xo = 0;
+    });
   }
 
   void dialoge(String xo) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -100,10 +135,25 @@ class _HomepageState extends State<Homepage> {
                     Navigator.pop(context);
                     rest();
                   },
-                  child: Text('R E P L A Y',style: TextStyle(fontSize: 18),)),
+                  child: Text(
+                    'R E P L A Y',
+                    style: TextStyle(fontSize: 18),
+                  )),
             ],
           );
         });
+    if (xo == 'O') {
+      setState(() {
+        score_po++;
+      });
+    } else if (xo == 'X') {
+      setState(() {
+        score_px++;
+      });
+    }
+    setState(() {
+      nbre_xo = 0;
+    });
   }
 
   void rest() {
@@ -113,6 +163,15 @@ class _HomepageState extends State<Homepage> {
       }
     });
   }
+
+  var playerStyle =
+      TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold);
+  var scoreStyel = TextStyle(
+      fontSize: 22,
+      color: Colors.greenAccent[700],
+      fontWeight: FontWeight.bold);
+  int score_px = 0;
+  int score_po = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -129,23 +188,57 @@ class _HomepageState extends State<Homepage> {
       body: Column(
         children: [
           SizedBox(
-            height: 100,
+            height: 20,
           ),
           Expanded(
+              flex: 1,
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'Player O',
+                          style: playerStyle,
+                        ),
+                        Text('Score : $score_po', style: scoreStyel),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'Player X',
+                          style: playerStyle,
+                        ),
+                        Text('Score : $score_px', style: scoreStyel),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+          Expanded(
+              flex: 3,
               child: GridView.builder(
                   itemCount: 9,
-                  gridDelegate:
-                      SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        tapped(index);
-                      },
-                      child: box(
-                        data: xoDisplay_list[index],
+                    return Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          tapped(index);
+                        },
+                        child: box(
+                          data: xoDisplay_list[index],
+                        ),
                       ),
                     );
                   })),
+          SizedBox(
+            height: 100,
+          )
         ],
       ),
     );
